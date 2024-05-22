@@ -1,110 +1,86 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define DISKSIZE 200
-
-int abs(int value)
-{
-  if (value < 0)
-    return -1 * value;
-  return value;
-}
-
-int sortReqAndSeparate(int *arr, int n, int head)
-{
-  int i, j, temp, swapped;
-  for (i = 0; i < n; i++)
-  {
-    swapped = 0;
-    for (j = 0; j < n - i - 1; j++)
-    {
-      if (arr[j] > arr[j + 1])
-      {
-        temp = arr[j];
-        arr[j] = arr[j + 1];
-        arr[j + 1] = temp;
-        swapped = 1;
-      }
-    }
-    if (!swapped)
-      break;
-  }
-
-  for (i = 0; i < n; i++)
-  {
-    if (arr[i] > head)
-      break;
-  }
-  return i;
-}
-
-void update(int *totalHO, int *head, int cur)
-{
-  *totalHO += abs(*head - cur);
-  *head = cur;
-  printf("%d\n", *head);
-}
-
-void SCAN(int req[], int n, int head, int toLeft)
-{
-
-  int i;
-  int totalHO = 0;
-  int run = 0;
-  int cur_end;
-
-  int FAH = sortReqAndSeparate(req, n, head);
-
-  printf("Seek sequence: \n%d\n", head);
-
-  while (1)
-  {
-
-    if (toLeft)
-    {
-
-      for (i = FAH - 1; i >= 0; i--)
-      {
-        update(&totalHO, &head, req[i]);
-      }
-
-      if (run == 1)
-        break;
-
-      toLeft = 0;
-      cur_end = 0;
-    }
-    else
-    {
-
-      for (i = FAH; i < n; i++)
-      {
-        update(&totalHO, &head, req[i]);
-      }
-
-      if (run == 1)
-        break;
-
-      toLeft = 1;
-      cur_end = DISKSIZE - 1;
-    }
-
-    update(&totalHO, &head, cur_end);
-
-    run++;
-  }
-
-  printf("Total head movements: %d\n", totalHO);
-}
 
 int main()
 {
+  int RQ[100], i, j, n, TotalHeadMoment = 0, initial, size, move, index, temp;
 
-  int req[] = {34, 15, 18, 36, 49, 57};
-  int n = sizeof(req) / sizeof(req[0]);
-  int head = 25;
-  int toLeft = 1;
+  printf("Enter the number of Requests: ");
+  scanf("%d", &n);
 
-  SCAN(req, n, head, toLeft);
+  printf("Enter the Requests sequence:\n");
+  for (i = 0; i < n; i++)
+    scanf("%d", &RQ[i]);
+
+  printf("Enter initial head position: ");
+  scanf("%d", &initial);
+
+  printf("Enter total disk size: ");
+  scanf("%d", &size);
+
+  printf("Enter the head movement direction (1 for high, 0 for low): ");
+  scanf("%d", &move);
+
+  // Sorting the request array
+  for (i = 0; i < n; i++)
+  {
+    for (j = 0; j < n - i - 1; j++)
+    {
+      if (RQ[j] > RQ[j + 1])
+      {
+        temp = RQ[j];
+        RQ[j] = RQ[j + 1];
+        RQ[j + 1] = temp;
+      }
+    }
+  }
+
+  // Finding the index of the first request greater than initial head position
+  for (i = 0; i < n; i++)
+  {
+    if (initial < RQ[i])
+    {
+      index = i;
+      break;
+    }
+  }
+
+  // If movement is towards high value
+  if (move == 1)
+  {
+    for (i = index; i < n; i++)
+    {
+      TotalHeadMoment += abs(RQ[i] - initial);
+      initial = RQ[i];
+    }
+    // Last movement for max size
+    TotalHeadMoment += abs(size - RQ[i - 1] - 1);
+    initial = size - 1;
+    for (i = index - 1; i >= 0; i--)
+    {
+      TotalHeadMoment += abs(RQ[i] - initial);
+      initial = RQ[i];
+    }
+  }
+  // If movement is towards low value
+  else
+  {
+    for (i = index - 1; i >= 0; i--)
+    {
+      TotalHeadMoment += abs(RQ[i] - initial);
+      initial = RQ[i];
+    }
+    // Last movement for min size
+    TotalHeadMoment += abs(RQ[i + 1] - 0);
+    initial = 0;
+    for (i = index; i < n; i++)
+    {
+      TotalHeadMoment += abs(RQ[i] - initial);
+      initial = RQ[i];
+    }
+  }
+
+  printf("Total head movement is %d\n", TotalHeadMoment);
 
   return 0;
 }
