@@ -38,7 +38,7 @@ int main()
       wait[i] += bt[j];
     }
   }
-  printf("process id\t\tburst time\t\twaiting time\t\tturnaround time\n");
+  printf("process id\tburst time\twaiting time\tturnaround time\n");
 
   for (i = 0; i < n; i++)
   {
@@ -51,8 +51,8 @@ int main()
   avg_wait = avg_wait / n;
   avg_turn = avg_turn / n;
 
-  printf("the avg waiting time is:%d", avg_wait);
-  printf("the avg turn around time is:%d", avg_turn);
+  printf("\nthe avg waiting time is:%d", avg_wait);
+  printf("\nthe avg turn around time is:%d", avg_turn);
 
   return 1;
 }
